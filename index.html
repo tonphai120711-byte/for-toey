@@ -108,8 +108,9 @@
 </head>
 <body>
 
+    <!-- 🎵 ล็อกชื่อไฟล์เป็น DAYONE.mp3 ตามรูปภาพ image_320edc.png เป๊ะๆ แล้วครับ -->
     <audio id="bgMusic" loop>
-        <source src="DayONE.mp3" type="audio/mpeg">
+        <source src="DAYONE.mp3" type="audio/mpeg">
     </audio>
 
     <div class="container">
@@ -135,12 +136,12 @@
         let isMusicPlaying = false;
         let noClickCount = 0; 
 
-        // ฟังก์ชันเปิดเพลงเมื่อมีการปฏิสัมพันธ์กับหน้าจอ
+        // ฟังก์ชันสั่งเล่นเพลงที่จะทำงานเมื่อมีการแตะหรือคลิกหน้าจอครั้งแรก
         function startMusic() {
             if (!isMusicPlaying) {
                 bgMusic.play().then(() => {
                     isMusicPlaying = true;
-                }).catch(err => console.log("Music playing..."));
+                }).catch(err => console.log("Music waiting for activation..."));
             }
         }
 
@@ -149,7 +150,7 @@
         document.body.addEventListener('click', startMusic);
         document.body.addEventListener('touchstart', startMusic);
 
-        // สติ๊กเกอร์ตกจากฟ้า (.gif)
+        // ดึงสติ๊กเกอร์ตกจากฟ้าตามไฟล์ที่มีอยู่จริง
         const stickerUrls = ['1.gif', '2.gif', '3.gif', '4.gif'];
 
         function createFallingSticker() {
@@ -175,7 +176,6 @@
 
         setInterval(createFallingSticker, 500);
 
-        // ลำดับรูปตอนกด NO ค่อย ๆ เปลี่ยนสติ๊กเกอร์
         const mainStickerSequence = ['1.gif', '2.gif', '3.gif', '4.gif'];
 
         noBtn.addEventListener('mouseover', handleNoInteraction);
@@ -215,16 +215,16 @@
             noBtn.style.top = `${y}px`;
         }
 
-        // เมื่อกดปุ่ม YES (ยอมหายโกรธ)
+        // เมื่อแฟนกด YES
         yesBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             startMusic();
             
-            // 🎯 ล็อกเป้าหมายไปที่ไฟล์รูป 5.JPG ตัวพิมพ์ใหญ่แบบที่พี่อัพลง GitHub แล้วขึ้นชัวร์ๆ
-            mainSticker.src = "5.JPG"; 
+            // ล็อกชื่อเป็น 5.JPG ตัวพิมพ์ใหญ่เป๊ะ ๆ ตามคลังไฟล์ในรูปภาพ
+            mainSticker.src = "5.webp"; 
             mainSticker.alt = "5";
             
-            questionText.innerText = "เย้! รักเค้าที่สุดในโลกเลยยยย  ิ ิ ❤️";
+            questionText.innerText = "เย้! รักเค้าที่สุดในโลกเลยยยย ❤️";
             
             yesBtn.style.display = 'none';
             noBtn.style.display = 'none';
