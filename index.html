@@ -15,11 +15,14 @@
 
         body {
             font-family: 'Mitr', sans-serif;
+            
+            /* ลายตารางขาวตัดฟ้า */
             background-color: #ffffff;
             background-image: 
                 linear-gradient(to right, rgba(142, 202, 230, 0.4) 1px, transparent 1px),
                 linear-gradient(to bottom, rgba(142, 202, 230, 0.4) 1px, transparent 1px);
             background-size: 35px 35px;
+            
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -107,12 +110,13 @@
 
     <audio id="bgMusic" loop>
         <source src="DayONE.mp3" type="audio/mpeg">
-        <source src="./DayONE.mp3" type="audio/mpeg">
     </audio>
 
     <div class="container">
         <img id="mainSticker" class="sticker-gif" src="1.gif" alt="1">
+        
         <h1 id="questionText">หายโกรธเค้าได้มั้ยคะ</h1>
+
         <div class="btn-group">
             <button id="yesBtn" class="btn">YES</button>
             <button id="noBtn" class="btn">NO</button>
@@ -131,26 +135,21 @@
         let isMusicPlaying = false;
         let noClickCount = 0; 
 
-        // 🛠️ ฟังก์ชันปลดล็อกเพลงบนระบบออนไลน์ระดับแอดวานซ์
+        // ฟังก์ชันเปิดเพลงเมื่อมีการปฏิสัมพันธ์กับหน้าจอ
         function startMusic() {
             if (!isMusicPlaying) {
-                bgMusic.muted = false;
                 bgMusic.play().then(() => {
                     isMusicPlaying = true;
-                }).catch(err => {
-                    console.log("พยายามเปิดเพลงใหม่...");
-                    // ลองโหลดเพลงซ้ำอีกครั้งหากเซิร์ฟเวอร์ประมวลผลช้า
-                    bgMusic.load();
-                    bgMusic.play();
-                });
+                }).catch(err => console.log("Music playing..."));
             }
         }
 
-        // ดักจับการแตะหน้าจอทุกรูปแบบเพื่อปลดล็อกการบล็อกเสียงของเบราว์เซอร์
-        window.addEventListener('click', startMusic);
-        window.addEventListener('touchstart', startMusic);
+        window.addEventListener('click', startMusic, { once: true });
+        window.addEventListener('touchstart', startMusic, { once: true });
         document.body.addEventListener('click', startMusic);
+        document.body.addEventListener('touchstart', startMusic);
 
+        // สติ๊กเกอร์ตกจากฟ้า (.gif)
         const stickerUrls = ['1.gif', '2.gif', '3.gif', '4.gif'];
 
         function createFallingSticker() {
@@ -176,6 +175,7 @@
 
         setInterval(createFallingSticker, 500);
 
+        // ลำดับรูปตอนกด NO ค่อย ๆ เปลี่ยนสติ๊กเกอร์
         const mainStickerSequence = ['1.gif', '2.gif', '3.gif', '4.gif'];
 
         noBtn.addEventListener('mouseover', handleNoInteraction);
@@ -215,28 +215,17 @@
             noBtn.style.top = `${y}px`;
         }
 
-        // เมื่อกดปุ่ม YES
+        // เมื่อกดปุ่ม YES (ยอมหายโกรธ)
         yesBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             startMusic();
             
-            // 🎯 ระบบป้องกันรูปที่ 5 แตกบน GitHub (จะสลับทดสอบนามสกุลอัตโนมัติจนกว่าจะเจอภาพจริง)
-            mainSticker.src = "5.jpg"; 
+            // 🎯 ล็อกเป้าหมายไปที่ไฟล์รูป 5.JPG ตัวพิมพ์ใหญ่แบบที่พี่อัพลง GitHub แล้วขึ้นชัวร์ๆ
+            mainSticker.src = "5.JPG"; 
             mainSticker.alt = "5";
             
-            mainSticker.onerror = function() {
-                if (this.src.endsWith("5.jpg")) {
-                    this.src = "5.JPG";
-                } else if (this.src.endsWith("5.JPG")) {
-                    this.src = "5.png";
-                } else if (this.src.endsWith("5.png")) {
-                    this.src = "5.PNG";
-                } else if (this.src.endsWith("5.PNG")) {
-                    this.src = "5.jpeg";
-                }
-            };
-            
             questionText.innerText = "เย้! รักเค้าที่สุดในโลกเลยยยย ❤️";
+            
             yesBtn.style.display = 'none';
             noBtn.style.display = 'none';
 
