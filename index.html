@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>หายโกรธเค้าได้มั้ยคะ...</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Mitr:wght@400;500&display=swap');
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Mitr', sans-serif;
+            
+            /* ลายตารางขาวตัดฟ้า */
+            background-color: #ffffff;
+            background-image: 
+                linear-gradient(to right, rgba(142, 202, 230, 0.4) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(142, 202, 230, 0.4) 1px, transparent 1px);
+            background-size: 35px 35px;
+            
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .container {
+            text-align: center;
+            z-index: 10;
+            padding: 20px;
+        }
+
+        .sticker-gif {
+            width: 180px;
+            height: 180px;
+            margin-bottom: 20px;
+            user-select: none;
+        }
+
+        h1 {
+            color: #555555;
+            font-size: 2.2rem;
+            margin-bottom: 40px;
+            font-weight: 500;
+        }
+
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+            min-height: 150px;
+        }
+
+        .btn {
+            border: none;
+            cursor: pointer;
+            font-family: 'Mitr', sans-serif;
+            font-weight: bold;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        #yesBtn {
+            background-color: #76ff03;
+            color: #2e7d32;
+            padding: 15px 40px;
+            font-size: 1.8rem;
+            border-radius: 50px;
+        }
+
+        #noBtn {
+            background-color: #ff5252;
+            color: #ffffff;
+            padding: 10px 25px;
+            font-size: 1.2rem;
+            border-radius: 30px;
+            position: relative;
+        }
+
+        .falling-sticker {
+            position: absolute;
+            top: -50px;
+            pointer-events: none;
+            animation: fall linear forwards;
+            z-index: 1;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(105vh) rotate(360deg);
+                opacity: 0.3;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <audio id="bgMusic" loop autoplay>
+        <source src="DayONE.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="container">
+        <img id="mainSticker" class="sticker-gif" src="1.gif" alt="1">
+        
+        <h1 id="questionText">หายโกรธเค้าได้มั้ยคะ</h1>
+
+        <div class="btn-group">
+            <button id="yesBtn" class="btn">YES</button>
+            <button id="noBtn" class="btn">NO</button>
+        </div>
+    </div>
+
+    <script>
+        const yesBtn = document.getElementById('yesBtn');
+        const noBtn = document.getElementById('noBtn');
+        const mainSticker = document.getElementById('mainSticker');
+        const questionText = document.getElementById('questionText');
+        const bgMusic = document.getElementById('bgMusic');
+
+        let yesScale = 1;
+        let noScale = 1;
+        let isMusicPlaying = false;
+        let noClickCount = 0; 
+
+        function startMusic() {
+            if (!isMusicPlaying) {
+                bgMusic.play().then(() => {
+                    isMusicPlaying = true;
+                }).catch(err => console.log("Music playing..."));
+            }
+        }
+
+        window.addEventListener('click', startMusic, { once: true });
+        window.addEventListener('touchstart', startMusic, { once: true });
+        document.body.addEventListener('click', startMusic);
+        document.body.addEventListener('touchstart', startMusic);
+
+        // 🎯 แก้ไขสติ๊กเกอร์ตกลงมาจากฟ้าให้เป็น .gif
+        const stickerUrls = ['1.gif', '2.gif', '3.gif', '4.gif'];
+
+        function createFallingSticker() {
+            const sticker = document.createElement('img');
+            const randomSrc = stickerUrls[Math.floor(Math.random() * stickerUrls.length)];
+            sticker.src = randomSrc;
+            sticker.classList.add('falling-sticker');
+
+            const size = Math.random() * 40 + 40;
+            sticker.style.width = `${size}px`;
+            sticker.style.height = `${size}px`;
+            sticker.style.left = Math.random() * window.innerWidth + 'px';
+
+            const duration = Math.random() * 3 + 3;
+            sticker.style.animationDuration = `${duration}s`;
+
+            document.body.appendChild(sticker);
+
+            setTimeout(() => {
+                sticker.remove();
+            }, duration * 1000);
+        }
+
+        setInterval(createFallingSticker, 500);
+
+        // 🎯 แก้ไขลำดับรูปตอนกด NO ให้เป็น .gif ดุ๊กดิ๊กเรียง 1-4
+        const mainStickerSequence = ['1.gif', '2.gif', '3.gif', '4.gif'];
+
+        noBtn.addEventListener('mouseover', handleNoInteraction);
+        noBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            startMusic();
+            handleNoInteraction();
+        });
+
+        function handleNoInteraction() {
+            noClickCount++; 
+
+            if (noClickCount < mainStickerSequence.length) {
+                mainSticker.src = mainStickerSequence[noClickCount];
+                mainSticker.alt = noClickCount + 1; 
+            } else {
+                mainSticker.src = "4.gif";
+                mainSticker.alt = "4";
+            }
+
+            yesScale += 0.2;
+            noScale -= 0.05;
+            if (noScale < 0.5) noScale = 0.5;
+
+            yesBtn.style.transform = `scale(${yesScale})`;
+            noBtn.style.transform = `scale(${noScale})`;
+
+            if (noClickCount === 1) {
+                return; 
+            }
+
+            const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
+            const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
+            
+            noBtn.style.position = 'absolute';
+            noBtn.style.left = `${x}px`;
+            noBtn.style.top = `${y}px`;
+        }
+
+        // เมื่อกดปุ่ม YES
+        yesBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            startMusic();
+            
+            // 🎯 ล็อกเป้าหมายไว้ที่ 5.jpg ตามที่พี่บอกว่ารูปนี้ขึ้นปกติครับ!
+            mainSticker.src = "5.jpg"; 
+            mainSticker.alt = "5";
+            
+            questionText.innerText = "เย้! รักเค้าที่สุดในโลกเลยยยย ❤️";
+            
+            yesBtn.style.display = 'none';
+            noBtn.style.display = 'none';
+
+            setInterval(createFallingSticker, 100);
+        });
+    </script>
+</body>
+</html>
